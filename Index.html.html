@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #171522;
+    --ink-deep: #0f0d18;
+    --parchment: #f7ecd9;
+    --parchment-dim: #efe2c8;
+    --wine: #7c2e3b;
+    --wine-soft: #a4525f;
+    --gold: #c9a24b;
+    --gold-bright: #e6c876;
+    --line: rgba(201,162,75,0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 50% -10%, #232037 0%, var(--ink) 45%, var(--ink-deep) 100%);
+    font-family: 'Jost', sans-serif;
+    color: var(--parchment);
+    overflow-x: hidden;
+  }
+
+  body::before{
+    content:'';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.045) 1px, transparent 1px);
+    background-size: 3px 3px;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .stars {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .stars span {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--gold-bright);
+    border-radius: 50%;
+    opacity: 0.35;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.7; }
+  }
+
+  .stage {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 140px;
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    background: linear-gradient(180deg, var(--parchment) 0%, var(--parchment-dim) 100%);
+    color: var(--ink);
+    border-radius: 6px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,162,75,0.4);
+    padding: 52px 44px 40px;
+    animation: rise 0.7s cubic-bezier(.2,.8,.2,1);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 6%; right: 6%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold-bright) 50%, var(--gold) 80%, transparent);
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(24px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--wine);
+    margin: 0 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(28px, 5vw, 40px);
+    line-height: 1.15;
+    margin: 0 0 22px;
+    color: #2a1418;
+  }
+
+  .body-copy {
+    font-size: 16px;
+    line-height: 1.75;
+    color: #3c342a;
+  }
+
+  .body-copy p { margin: 0 0 16px; }
+  .body-copy ul { margin: 0 0 4px; padding-left: 0; list-style: none; }
+  .body-copy li {
+    margin: 0 0 16px;
+    padding-left: 22px;
+    position: relative;
+  }
+  .body-copy li::before {
+    content: '❧';
+    position: absolute;
+    left: 0;
+    top: 1px;
+    color: var(--wine-soft);
+    font-size: 13px;
+  }
+  .body-copy strong {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    color: var(--wine);
+    font-size: 1.05em;
+  }
+
+  .actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+  }
+
+  button.cta {
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+    color: var(--parchment);
+    background: linear-gradient(180deg, var(--wine-soft), var(--wine));
+    border: 1px solid rgba(201,162,75,0.5);
+    padding: 14px 34px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 8px 20px rgba(124,46,59,0.35);
+  }
+  button.cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(124,46,59,0.45);
+  }
+  button.cta:focus-visible {
+    outline: 2px solid var(--gold-bright);
+    outline-offset: 3px;
+  }
+  button.cta.no {
+    background: transparent;
+    color: #8a7a63;
+    border: 1px solid rgba(60,52,42,0.25);
+    box-shadow: none;
+    font-size: 13px;
+    padding: 10px 18px;
+    margin-left: 12px;
+  }
+  button.cta.no:hover { transform: none; color: #6b5c48; }
+
+  .yes-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
+
+  .no-runaway { position: relative; }
+
+  input[type="date"] {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    padding: 12px 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(60,52,42,0.3);
+    background: #fffdf8;
+    color: var(--ink);
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .date-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    margin-top: 8px;
+  }
+
+  input[type="tel"] {
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 3px;
+    border: 1px solid rgba(60,52,42,0.3);
+    background: #fffdf8;
+    color: var(--ink);
+    width: 100%;
+    max-width: 260px;
+    text-align: center;
+  }
+  .phone-hint {
+    font-family: 'Space Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    color: #8a7a63;
+    text-align: center;
+    margin-top: -8px;
+  }
+
+  .final-emoji {
+    text-align: center;
+    font-size: 34px;
+    margin: 6px 0 4px;
+    letter-spacing: 6px;
+  }
+
+  .date-lockedin {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--wine);
+    text-align: center;
+    margin: -6px 0 18px;
+  }
+
+  /* heart progress trail */
+  .trail-wrap {
+    position: fixed;
+    bottom: 26px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .trail-wrap svg { overflow: visible; }
+  .trail-bg { fill: none; stroke: rgba(201,162,75,0.18); stroke-width: 2.4; }
+  .trail-fg { fill: none; stroke: var(--gold-bright); stroke-width: 2.6; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; filter: drop-shadow(0 0 4px rgba(230,200,118,0.6)); }
+  .trail-dot { fill: var(--ink-deep); stroke: rgba(201,162,75,0.5); stroke-width: 1.5; transition: fill 0.4s ease, stroke 0.4s ease, r 0.4s ease; }
+  .trail-dot.lit { fill: var(--gold-bright); stroke: var(--gold-bright); }
+  .trail-heart-fill { fill: var(--gold-bright); opacity: 0; transition: opacity 0.8s ease; filter: drop-shadow(0 0 10px rgba(230,200,118,0.8)); }
+  .trail-heart-fill.on { opacity: 0.9; animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.04); } }
+
+  .step-label {
+    position: fixed;
+    bottom: 68px;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(247,236,217,0.4);
+    z-index: 2;
+  }
+
+  .confetti-piece {
+    position: fixed;
+    top: -20px;
+    font-size: 18px;
+    animation: fall linear forwards;
+    z-index: 3;
+    pointer-events: none;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+  }
+
+  .back-link {
+    position: absolute;
+    top: 22px;
+    left: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #a8987e;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px 6px;
+    transition: color 0.2s ease;
+  }
+  .back-link:hover { color: var(--wine); }
+  .back-link:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+
+  @media (max-width: 480px) {
+    .card { padding: 40px 26px 32px; }
+  }
+
+
+  @media (prefers-reduced-motion: reduce) {
+    .card { animation: none; }
+    .confetti-piece { animation: none; display: none; }
+    .trail-heart-fill.on { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="stage">
+  <div class="card" id="card"></div>
+</div>
+
+<div class="step-label" id="stepLabel"></div>
+<div class="trail-wrap">
+  <svg id="trailSvg" width="220" height="66" viewBox="0 0 220 66">
+    <path id="heartFill" class="trail-heart-fill" d=""></path>
+    <path id="trailBg" class="trail-bg" d=""></path>
+    <path id="trailFg" class="trail-fg" d=""></path>
+  </svg>
+</div>
+
+<script>
+/* ---------- content ---------- */
+const pages = [
+  {
+    eyebrow: 'Chapter One',
+    title: 'The Spark of Intention',
+    body: `<p>Looking back to when we first started talking, I love thinking about how we naturally gave this our time, attention, and energy, without either of us forcing it. What started as simple conversations beautifully grew into something much deeper as we truly got to know each other, one honest exchange at a time.</p>
+           <p>Every shared story, every laugh, and every quiet moment brought us closer, creating a bond that has completely changed my world. I don't think either of us set out looking for this, and that's part of why it feels so real.</p>`,
+    cta: 'My Intentions for Us'
+  },
+  {
+    eyebrow: 'Chapter Two',
+    title: 'My Intentions',
+    body: `<p>A real relationship means showing up daily, even when life gets busy or stressful. These are the practical promises I intend to keep for you:</p>
+           <ul>
+             <li><strong>Consistent communication</strong> — to never leave you guessing about where we stand or what I'm thinking. I want to check in on the ordinary days, not just the big ones, and keep you close to my life — the wins, the stress, the small stuff — so nothing about me ever feels like a surprise to you.</li>
+             <li><strong>An active partner</strong> — to stand as a steady protector and provider, and to make that real, not just a word. When something is hard for you, I want to be the first call you make, and someone who actually shows up with solutions, not just sympathy.</li>
+             <li><strong>Deliberate time</strong> — showing up with intention in whatever way you actually need it, whether that's planning a night together, remembering the small things, checking in on a hard day, or simply being present. Intention means noticing what you need before you have to ask, so you never feel secondary to a busy schedule.</li>
+           </ul>`,
+    cta: 'Your Energy in Our Space'
+  },
+  {
+    eyebrow: 'Chapter Three',
+    title: 'Your Energy in Our Space',
+    body: `<p>A beautiful partnership relies on what we both bring to the table. I deeply value the presence you pour into our connection:</p>
+           <ul>
+             <li><strong>Grounded wisdom</strong> — your honest perspective, even when it's not the easy thing to say. You keep us aligned, call me higher when it matters, and I trust your read on things more than almost anyone's.</li>
+             <li><strong>Individual drive</strong> — your goals, your intelligence, your independence. Watching you chase what you want inspires me daily, and it reminds me this partnership is built on two whole people, not one person waiting on the other.</li>
+             <li><strong>Affection & peace</strong> — your warmth, your words, your closeness. The small, steady reassurances you give me are what protect our bond day to day, and remind me exactly where we stand even when life gets loud.</li>
+           </ul>`,
+    cta: 'Walking Side-by-Side'
+  },
+  {
+    eyebrow: 'Chapter Four',
+    title: 'Walking Side-by-Side',
+    body: `<p>We are two distinct individuals, but together we form a true team. A healthy partnership means moving forward as one stable unit:</p>
+           <ul>
+             <li><strong>Shared vision</strong> — merging our separate dreams onto one mutual path forward, so the big decisions, where we live, what we build, what we prioritize, are always something we plan together, not something one of us announces to the other.</li>
+             <li><strong>Equal effort</strong> — balancing the load so neither of us carries the weight alone. Some seasons I'll carry more, some seasons you will, but over time it should always feel even.</li>
+             <li><strong>Mutual respect</strong> — honoring who we each are, even as we grow closer. Becoming a team was never meant to mean becoming the same person, and I want to keep respecting the parts of you that exist outside of us.</li>
+           </ul>`,
+    cta: 'Our World: Circles & Boundaries'
+  },
+  {
+    eyebrow: 'Chapter Five',
+    title: 'Our World: Circles & Boundaries',
+    body: `<p>We don't live in a vacuum, and our relationship will meet the world around us — family, friends, opinions we didn't ask for. For me, that means guarding our private space fiercely, and making sure disagreements or misunderstandings get worked out between us first, before anyone else ever weighs in.</p>
+           <p>I promise to treat your family and friends with real respect, to blend our worlds seamlessly instead of keeping them separate, and to make sure no outside noise ever comes between us. Our bond is ours alone to build and protect.</p>`,
+    cta: 'Financial Unity & Growth'
+  },
+  {
+    eyebrow: 'Chapter Six',
+    title: 'Financial Unity & Growth',
+    body: `<p>Growth isn't only emotional; it's practical too. I want us to build a future of real security and freedom — navigating savings, investments, and career milestones with transparent, zero-judgment communication, even when the numbers are messy or the timing isn't perfect.</p>
+           <p>We'll support each other's ambitions, celebrate every promotion and every win no matter how small, and build a life of real comfort and impact, together, on purpose.</p>`,
+    cta: 'Independence Within Togetherness'
+  },
+  {
+    eyebrow: 'Chapter Seven',
+    title: 'Independence Within Togetherness',
+    body: `<p>While we build an unbreakable team, I never want you to lose the individual brilliance that makes you who you are. Falling for you never meant asking you to shrink.</p>
+           <p>A healthy relationship gives each other room to pursue personal passions, spend time with friends, and enjoy quiet moments alone, without guilt and without needing an explanation. We don't need to be attached at the hip to be entirely locked in.</p>`,
+    cta: 'Our Safeguard'
+  },
+  {
+    eyebrow: 'Chapter Eight',
+    title: 'Our Safeguard',
+    body: `<p>We won't always see eye to eye, and that's perfectly okay. What matters is how we move through it. In this relationship, I want us to promise each other:</p>
+           <ul>
+             <li><strong>Us vs. the problem</strong> — never you against me, always the two of us against whatever we're facing. The moment it starts to feel like a competition, I want us to both stop and remember we're on the same side.</li>
+             <li><strong>Honest, soft communication</strong> — no shutting down, no hiding, no walking away mid-conversation. I want us to be able to say the hard thing out loud, gently, and trust that it won't be used against us later.</li>
+             <li><strong>Grace & patience</strong> — room to be human, to get it wrong sometimes, and to apologize quickly and mean it. Protecting our bond will always matter more to me than winning an argument.</li>
+           </ul>`,
+    cta: 'Our Infinite Growth'
+  },
+  {
+    eyebrow: 'Chapter Nine',
+    title: 'Our Infinite Growth',
+    body: `<p>We are not going to stand still. We're going to build a life of real impact — chasing career goals, exploring new places, learning new things side by side, and supporting each other's wildest ambitions, even the ones that feel a little unreasonable at first.</p>
+           <p>Our growth has no limits. But while we build the big things, we'll never forget to celebrate the tiny victories along the way — the ordinary Tuesdays are allowed to matter too.</p>`,
+    cta: 'The Next Step'
+  },
+  {
+    eyebrow: 'Chapter Ten',
+    title: 'A Beautiful Beginning',
+    special: 'proposal',
+    body: `<p>I don't want us to just drift from day to day anymore. I want to build a real foundation with you. I want to protect you, cherish you, and call you mine.</p>
+           <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:var(--wine);margin-top:22px;">Will you officially do me the honor of becoming my girlfriend?</p>`,
+    cta: 'Yes, a million times! ❤️'
+  },
+  {
+    eyebrow: 'Chapter Eleven',
+    title: "Let's Mark the Calendar",
+    special: 'date',
+    body: `<p>I cannot wait to hold you close as my official girlfriend. Pick the perfect date for our celebration, and let's start this new chapter beautifully.</p>`,
+    cta: 'Lock In Our Date ❤️'
+  }
+];
+
+let step = 0;
+const card = document.getElementById('card');
+const stepLabel = document.getElementById('stepLabel');
+let chosenDate = null;
+let chosenPhone = '';
+
+/* ---------- heart progress trail ---------- */
+const heartD = "M110,58 C90,40 55,28 55,8 C55,-6 75,-6 82,4 C88,-2 96,2 96,10 C96,2 104,-2 110,4 C117,-2 125,2 125,10 C125,2 133,-2 139,4 C146,-6 166,-6 166,8 C166,28 131,40 110,58 Z";
+/* simpler, cleaner heart path using standard curve set below (overrides) */
+const HEART = "M110,55 C88,34 60,20 60,3 C60,-11 82,-12 92,0 C98,-8 108,-4 110,5 C112,-4 122,-8 128,0 C138,-12 160,-11 160,3 C160,20 132,34 110,55 Z";
+
+const bgPath = document.getElementById('trailBg');
+const fgPath = document.getElementById('trailFg');
+const fillPath = document.getElementById('heartFill');
+bgPath.setAttribute('d', HEART);
+fgPath.setAttribute('d', HEART);
+fillPath.setAttribute('d', HEART);
+bgPath.setAttribute('transform','translate(0,8) scale(0.62)');
+fgPath.setAttribute('transform','translate(0,8) scale(0.62)');
+fillPath.setAttribute('transform','translate(0,8) scale(0.62)');
+
+const totalLen = fgPath.getTotalLength();
+fgPath.style.strokeDasharray = totalLen;
+fgPath.style.strokeDashoffset = totalLen;
+
+function renderTrail() {
+  const total = pages.length; // 11 steps before final
+  const frac = Math.min(step / (total - 1), 1);
+  fgPath.style.strokeDashoffset = String(totalLen * (1 - frac));
+  if (step >= total - 1 && step > 0) {
+    // will be fully lit right before final screen too
+  }
+}
+
+function litHeart(on) {
+  fillPath.classList.toggle('on', on);
+  fgPath.style.opacity = on ? '0.3' : '1';
+}
+
+/* ---------- stars ---------- */
+const starsWrap = document.getElementById('stars');
+for (let i = 0; i < 40; i++) {
+  const s = document.createElement('span');
+  s.style.left = Math.random() * 100 + '%';
+  s.style.top = Math.random() * 100 + '%';
+  s.style.animationDelay = (Math.random() * 4) + 's';
+  starsWrap.appendChild(s);
+}
+
+/* ---------- render ---------- */
+function renderPage() {
+  renderTrail();
+
+  if (step < pages.length) {
+    const p = pages[step];
+    stepLabel.textContent = `${p.eyebrow} · ${step + 1} of ${pages.length}`;
+
+    let extra = '';
+    let ctaHandler = () => { step++; renderPage(); };
+    let secondaryButton = '';
+
+    if (p.special === 'proposal') {
+      secondaryButton = `<button class="cta no" id="noBtn" type="button">not yet...</button>`;
+    }
+
+    if (p.special === 'date') {
+      extra = `
+        <div class="date-wrap">
+          <input type="date" id="dateInput" />
+        </div>`;
+    }
+
+    const backLink = step > 0 ? `<button class="back-link" id="backBtn" type="button">← back</button>` : '';
+
+    card.innerHTML = `
+      ${backLink}
+      <p class="eyebrow">${p.eyebrow}</p>
+      <h1>${p.title}</h1>
+      <div class="body-copy">${p.body}</div>
+      ${extra}
+      <div class="actions"><div class="yes-row">
+        <button class="cta" id="mainBtn" type="button">${p.cta}</button>
+        ${secondaryButton}
+      </div></div>
+    `;
+
+    if (step > 0) {
+      document.getElementById('backBtn').addEventListener('click', () => {
+        step--;
+        renderPage();
+      });
+    }
+
+    document.getElementById('mainBtn').addEventListener('click', () => {
+      if (p.special === 'date') {
+        const val = document.getElementById('dateInput').value;
+        if (!val) {
+          document.getElementById('dateInput').style.borderColor = 'var(--wine)';
+          return;
+        }
+        chosenDate = val;
+      }
+      ctaHandler();
+    });
+
+    if (p.special === 'proposal') {
+      const noBtn = document.getElementById('noBtn');
+      noBtn.addEventListener('mouseenter', dodge);
+      noBtn.addEventListener('click', (e) => { dodge(e); });
+    }
+
+  } else {
+    // final screen
+    litHeart(true);
+    stepLabel.textContent = "It's Official";
+    const prettyDate = chosenDate
+      ? new Date(chosenDate + 'T00:00:00').toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+      : '';
+
+    card.innerHTML = `
+      <button class="back-link" id="backBtn" type="button">← back</button>
+      <p class="eyebrow">Final Chapter</p>
+      <h1>It's Official 👑</h1>
+      <div class="final-emoji">❤️ ✨ 💍</div>
+      <div class="body-copy" style="text-align:center;">
+        <p>Our celebration is locked in for</p>
+      </div>
+      <div class="date-lockedin">${prettyDate}</div>
+      <div class="body-copy" style="text-align:center;">
+        <p>I love you infinitely, and I am so excited for this beautiful journey together.</p>
+      </div>
+      <div class="date-wrap">
+        <p class="phone-hint">this opens WhatsApp with your answer ready to send</p>
+        <div class="actions"><div class="yes-row">
+          <button class="cta" id="textBtn" type="button">Message Him on WhatsApp 📱</button>
+        </div></div>
+      </div>
+    `;
+
+    document.getElementById('textBtn').addEventListener('click', () => {
+      const hisNumber = '233242989438'; // +233 24 298 9438, WhatsApp format (no leading 0 or +)
+      const msg = encodeURIComponent(`Yes ❤️ — our date is locked in for ${prettyDate}!`);
+      window.open(`https://wa.me/${hisNumber}?text=${msg}`, '_blank');
+    });
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+      litHeart(false);
+      step--;
+      renderPage();
+    });
+
+    launchConfetti();
+  }
+}
+
+function dodge(e) {
+  const btn = e.target;
+  const card = btn.closest('.card');
+  const rect = card.getBoundingClientRect();
+  const maxX = rect.width - 140;
+  const maxY = rect.height - 220;
+  const x = Math.max(20, Math.random() * maxX);
+  const y = Math.max(160, Math.random() * maxY);
+  btn.style.position = 'absolute';
+  btn.style.left = x + 'px';
+  btn.style.top = y + 'px';
+}
+
+function launchConfetti() {
+  const emojis = ['❤️','✨','🤍','💛'];
+  for (let i = 0; i < 26; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (3 + Math.random() * 2.5) + 's';
+      el.style.fontSize = (14 + Math.random() * 14) + 'px';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 6000);
+    }, i * 120);
+  }
+}
+
+renderPage();
+</script>
+</body>
+</html>
